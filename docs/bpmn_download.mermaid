@@ -1,0 +1,39 @@
+graph TD
+    Start([Пользователь хочет скачать торрент]) --> ViewPage[Просмотр страницы торрента]
+    ViewPage --> ClickDownload[Клик на Download]
+    ClickDownload --> CheckAuth{Авторизован?}
+    
+    CheckAuth -->|Нет| LoginRequired[Требуется вход]
+    LoginRequired --> End1([Конец])
+    
+    CheckAuth -->|Да| ServeTorrent[Отдача .torrent файла]
+    ServeTorrent --> IncrementCounter[Инкремент счетчика downloads]
+    IncrementCounter --> UserDownloads[Открытие в<br/>торрент-клиенте]
+    
+    UserDownloads --> ClientConnect[Торрент-клиент<br/>подключается к трекеру]
+    ClientConnect --> AnnounceRequest[Отправка announce запроса:<br/>- info_hash<br/>- peer_id<br/>- uploaded/downloaded/left]
+    
+    AnnounceRequest --> TrackerValidate{Валидация<br/>трекером}
+    TrackerValidate -->|Неверный info_hash| RejectPeer[Отклонение пира]
+    RejectPeer --> End2([Конец])
+    
+    TrackerValidate -->|Валидный| UpdatePeerStats[(Обновление PeerStats в БД)]
+    UpdatePeerStats --> ReturnPeerList[Возврат списка пиров]
+    ReturnPeerList --> StartDownload[Начало загрузки/раздачи]
+    
+    StartDownload --> PeriodicAnnounce[Периодические announce<br/>каждые 30-60 мин]
+    PeriodicAnnounce --> UpdateStats[Обновление статистики<br/>seeders/leechers]
+    UpdateStats --> Complete{Загрузка<br/>завершена?}
+    
+    Complete -->|Нет| PeriodicAnnounce
+    Complete -->|Да| FinalAnnounce[Финальный announce<br/>event=completed]
+    FinalAnnounce --> UpdateComplete[(Обновление:<br/>downloads++<br/>seeders++)]
+    UpdateComplete --> End3([Конец])
+    
+    style Start fill:#2E7D32,color:#fff
+    style End1 fill:#C62828,color:#fff
+    style End2 fill:#C62828,color:#fff
+    style End3 fill:#2E7D32,color:#fff
+    style UpdatePeerStats fill:#1565C0,color:#fff
+    style UpdateComplete fill:#1565C0,color:#fff
+    style AnnounceRequest fill:#EF6C00,color:#fff

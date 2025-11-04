@@ -1,0 +1,65 @@
+flowchart TB
+    subgraph Client["Клиент"]
+        Browser[Веб-браузер]
+        TorrentClient[Торрент-клиент<br/>qBittorrent/Transmission]
+    end
+    
+    subgraph Frontend["Frontend Layer"]
+        Templates[Jinja2 Templates]
+        Static[Static Files<br/>CSS/JS/Images]
+    end
+    
+    subgraph Backend["Backend Layer FastAPI"]
+        API[REST API<br/>Endpoints]
+        Auth[Authentication<br/>JWT/Session]
+        TorrentParser[Torrent Parser<br/>.torrent файлы]
+        SearchEngine[Search Service<br/>SQL поиск]
+        FileStorage[File Storage Service<br/>Работа с файлами]
+    end
+    
+    subgraph Database["Data Layer"]
+        PostgreSQL[(PostgreSQL<br/>База данных)]
+        Redis[(Redis<br/>Кеш/Сессии)]
+    end
+    
+    subgraph Storage["File Storage"]
+        TorrentFiles[Директория<br/>/storage/torrents/]
+    end
+    
+    subgraph Tracker["Tracker Layer"]
+        OpenTracker[OpenTracker<br/>HTTP/UDP трекер]
+    end
+    
+    subgraph External["External Services"]
+        SMTP[SMTP Server<br/>Email уведомления]
+    end
+    
+    Browser --> API
+    Browser --> Templates
+    Browser --> Static
+    TorrentClient -.-> OpenTracker
+    
+    Templates -.-> API
+    API --> Auth
+    API --> TorrentParser
+    API --> SearchEngine
+    API --> FileStorage
+    
+    Auth --> PostgreSQL
+    Auth --> Redis
+    TorrentParser -.-> TorrentFiles
+    SearchEngine --> PostgreSQL
+    FileStorage --> TorrentFiles
+    FileStorage --> PostgreSQL
+    
+    API -.-> SMTP
+    OpenTracker --> PostgreSQL
+    OpenTracker -.-> TorrentFiles
+    
+    style Client fill:#E8F4F8
+    style Frontend fill:#FFF4E6
+    style Backend fill:#E8F5E9
+    style Database fill:#F3E5F5
+    style Storage fill:#FFF9C4
+    style Tracker fill:#FFE0B2
+    style External fill:#FFEBEE
