@@ -1,0 +1,31 @@
+graph TD
+    Start([Пользователь хочет загрузить торрент]) --> Login{Авторизован?}
+    Login -->|Нет| LoginPage[Страница входа]
+    LoginPage --> LoginSuccess{Успешный вход?}
+    LoginSuccess -->|Да| UploadForm
+    LoginSuccess -->|Нет| LoginPage
+    Login -->|Да| UploadForm[Форма загрузки торрента]
+    
+    UploadForm --> FillForm[Заполнение формы:<br/>- Название<br/>- Описание<br/>- Категория<br/>- Теги<br/>- .torrent файл]
+    FillForm --> ValidateForm{Валидация<br/>формы}
+    ValidateForm -->|Ошибка| ShowError[Показать ошибки]
+    ShowError --> UploadForm
+    
+    ValidateForm -->|Успех| ParseTorrent[Парсинг .torrent файла]
+    ParseTorrent --> ExtractInfo[Извлечение:<br/>- info_hash<br/>- список файлов<br/>- размер]
+    ExtractInfo --> CheckDuplicate{Проверка<br/>дубликата}
+    
+    CheckDuplicate -->|Дубликат найден| ShowDupError[Ошибка: торрент уже существует]
+    ShowDupError --> End1([Конец])
+    
+    CheckDuplicate -->|Уникальный| SaveToDB[(Сохранение в БД:<br/>- Torrent<br/>- TorrentFile<br/>- Tags)]
+    SaveToDB --> SaveFile[Сохранение .torrent<br/>файла на диск]
+    SaveFile --> UpdateTracker[Добавление info_hash<br/>в трекер whitelist]
+    UpdateTracker --> Success[Успешно:<br/>редирект на страницу торрента]
+    Success --> End2([Конец])
+    
+    style Start fill:#2E7D32,color:#fff
+    style End1 fill:#C62828,color:#fff
+    style End2 fill:#2E7D32,color:#fff
+    style SaveToDB fill:#1565C0,color:#fff
+    style UpdateTracker fill:#EF6C00,color:#fff
