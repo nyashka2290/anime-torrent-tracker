@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi.responses import FileResponse
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -63,6 +65,12 @@ async def download_torrent(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Torrent not found"
+        )
+
+    if not Path(torrent.file_path).exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Torrent file not found on disk"
         )
 
     return FileResponse(
