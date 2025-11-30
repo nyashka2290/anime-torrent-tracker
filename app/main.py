@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from app.api.v1.router import api_router
 from app.db.session import AsyncSessionLocal
@@ -24,7 +25,11 @@ app.include_router(api_router, prefix="/api/v1")
 async def index(request: Request):
     """Главная страница: показывает список торрентов"""
     async with AsyncSessionLocal() as db:
-        query = select(Torrent).order_by(Torrent.id.desc())
+        query = (
+            select(Torrent)
+            .options(joinedload(Torrent.uploader))
+            .order_by(Torrent.id.desc())
+        )
         result = await db.execute(query)
         torrents = result.scalars().all()
 

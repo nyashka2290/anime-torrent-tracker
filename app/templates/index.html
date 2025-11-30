@@ -14,7 +14,13 @@
             <div class="card-body">
                 <h5 class="card-title text-primary">{{ torrent.title }}</h5>
                 <p class="card-text text-muted small">
-                    Размер: {{ (torrent.size / 1024 / 1024)|round(2) }} MB
+                    {{ (torrent.size / 1024 / 1024)|round(2) }} MB
+                    {% if torrent.uploader %}
+                    • {{ torrent.uploader.username }}
+                    {% endif %}
+                    {% if torrent.created_at %}
+                    • {{ torrent.created_at.strftime('%d.%m.%Y') }}
+                    {% endif %}
                 </p>
                 <p class="card-text">{{ torrent.description or "Нет описания" }}</p>
             </div>
