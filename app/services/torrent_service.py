@@ -18,6 +18,12 @@ class TorrentService:
             file: UploadFile,
             uploader_id: int
     ) -> Torrent:
+        if not file.filename or not file.filename.endswith('.torrent'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File must have .torrent extension"
+            )
+
         file_bytes = await file.read()
 
         try:
