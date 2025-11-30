@@ -8,6 +8,7 @@ from app.models.torrent import Torrent
 from app.schemas.torrent import TorrentCreate
 
 STORAGE_PATH = Path("storage/torrents")
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 class TorrentService:
@@ -26,8 +27,13 @@ class TorrentService:
 
         file_bytes = await file.read()
 
+        if len(file_bytes) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail="File too large. Maximum size is 10 MB"
+            )
+
         try:
-            # Парсим .torrent файл
             torrent_meta = TorrentParser.from_string(file_bytes)
         except Exception:
             raise HTTPException(
