@@ -1,5 +1,6 @@
 from pathlib import Path
 from fastapi import UploadFile, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from torrentool.api import Torrent as TorrentParser
 
@@ -26,6 +27,15 @@ class TorrentService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid .torrent file"
+            )
+
+        # Duplicate torrent check
+        query = select(Torrent).where(Torrent.info_hash == torrent_meta.info_hash)
+        result = await db.execute(query)
+        if result.scalar_one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Torrent already exists"
             )
 
         file_name = f"{torrent_meta.info_hash}.torrent"
