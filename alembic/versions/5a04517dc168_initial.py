@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: d12fe5b9d16e
+Revision ID: 5a04517dc168
 Revises: 
-Create Date: 2025-11-30 21:45:16.665855
+Create Date: 2025-11-30 22:38:40.390926
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd12fe5b9d16e'
+revision: str = '5a04517dc168'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,6 +26,7 @@ def upgrade() -> None:
     sa.Column('hashed_password', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -39,6 +40,7 @@ def upgrade() -> None:
     sa.Column('size', sa.BigInteger(), nullable=False),
     sa.Column('file_path', sa.String(), nullable=False),
     sa.Column('uploader_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['uploader_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
