@@ -137,8 +137,15 @@
             fetch('/api/v1/auth/me', {
                 headers: {'Authorization': `Bearer ${token}`}
             })
-            .then(r => r.json())
+            .then(r => {
+                if (!r.ok) {
+                    localStorage.removeItem('access_token');
+                    return null;
+                }
+                return r.json();
+            })
             .then(user => {
+                if (!user) return;
                 authNav.innerHTML = `
                     <li class="nav-item">
                         <span class="nav-link">👤 ${user.username}</span>
