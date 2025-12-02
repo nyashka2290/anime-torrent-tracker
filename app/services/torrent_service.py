@@ -69,7 +69,12 @@ class TorrentService:
         )
 
         db.add(db_torrent)
-        await db.commit()
-        await db.refresh(db_torrent)
+
+        try:
+            await db.commit()
+            await db.refresh(db_torrent)
+        except Exception:
+            file_path.unlink(missing_ok=True)
+            raise
 
         return db_torrent
