@@ -9,6 +9,20 @@
 - **Tracker:** OpenTracker (HTTP/UDP)
 - **Deployment:** Docker, Docker Compose
 
+## Запуск
+
+1. Скопируйте файл окружения:
+```bash
+cp .env.example .env
+```
+
+2. Запустите приложение:
+```bash
+docker-compose up --build
+```
+
+3. Откройте в браузере: http://localhost:8000
+
 ## Архитектура
 
 ### Диаграмма компонентов
