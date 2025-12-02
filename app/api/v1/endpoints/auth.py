@@ -16,9 +16,7 @@ async def register(
     user_in: UserCreate,
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Регистрация нового пользователя
-    """
+    """Регистрация нового пользователя"""
     return await AuthService.register_new_user(db=db, user_in=user_in)
 
 
@@ -27,9 +25,7 @@ async def login_access_token(
         db: AsyncSession = Depends(get_db),
         form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Token:
-    """
-    Вход по OAuth2 (username=email, password=password)
-    """
+    """Аутентификация и получение JWT токена"""
     user = await AuthService.authenticate_user(
         db, email=form_data.username, password=form_data.password
     )
@@ -47,4 +43,5 @@ async def login_access_token(
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
+    """Получение информации о текущем пользователе"""
     return current_user

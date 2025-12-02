@@ -22,9 +22,7 @@ async def upload_torrent(
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
 ):
-    """
-    Загрузка .torrent файла (Только для авторизованных)
-    """
+    """Загрузка нового торрента (только для авторизованных)"""
     torrent_in = TorrentCreate(title=title, description=description)
 
     return await TorrentService.create_torrent(
@@ -41,9 +39,7 @@ async def read_torrents(
         limit: int = 100,
         db: AsyncSession = Depends(get_db),
 ):
-    """
-    Получить список торрентов (Доступно всем).
-    """
+    """Получение списка торрентов (Доступно всем)"""
     query = select(Torrent).offset(skip).limit(limit)
     result = await db.execute(query)
     return result.scalars().all()
@@ -54,9 +50,7 @@ async def download_torrent(
         torrent_id: int,
         db: AsyncSession = Depends(get_db),
 ):
-    """
-    Скачивание .torrent файла по ID.
-    """
+    """Скачивание торрента по ID"""
     query = select(Torrent).where(Torrent.id == torrent_id)
     result = await db.execute(query)
     torrent = result.scalar_one_or_none()
