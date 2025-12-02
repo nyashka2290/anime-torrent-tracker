@@ -1,5 +1,6 @@
 """Главный модуль приложения FastAPI"""
 from fastapi import FastAPI, Query, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_, select
@@ -17,7 +18,7 @@ app.include_router(api_router, prefix="/api/v1")
 
 
 @app.get("/")
-async def index(request: Request, q: str = Query(None)):
+async def index(request: Request, q: str | None = Query(None)) -> HTMLResponse:
     """Главная страница со списком торрентов и поиском"""
     async with AsyncSessionLocal() as db:
         query = select(Torrent).options(joinedload(Torrent.uploader))
@@ -42,18 +43,18 @@ async def index(request: Request, q: str = Query(None)):
 
 
 @app.get("/login")
-async def login_page(request: Request):
+async def login_page(request: Request) -> HTMLResponse:
     """Страница входа"""
     return templates.TemplateResponse("login.html", {"request": request})
 
 
 @app.get("/register")
-async def register_page(request: Request):
+async def register_page(request: Request) -> HTMLResponse:
     """Страница регистрации"""
     return templates.TemplateResponse("register.html", {"request": request})
 
 
 @app.get("/upload")
-async def upload_page(request: Request):
+async def upload_page(request: Request) -> HTMLResponse:
     """Страница загрузки торрента"""
     return templates.TemplateResponse("upload.html", {"request": request})
