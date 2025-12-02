@@ -12,6 +12,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 class TorrentService:
+    """Сервис для работы с торрент-файлами"""
     @staticmethod
     async def create_torrent(
             db: AsyncSession,
@@ -19,6 +20,23 @@ class TorrentService:
             file: UploadFile,
             uploader_id: int
     ) -> Torrent:
+        """
+        Загружает и сохраняет торрент-файл
+
+        Args:
+            db: Сессия базы данных
+            torrent_in: Метаданные торрента
+            file: Загруженный .torrent файл
+            uploader_id: ID пользователя-загрузчика
+
+        Returns:
+            Созданная запись торрента.
+
+        Raises:
+            HTTPException: 400 если файл невалидный
+            HTTPException: 409 если торрент уже существует
+            HTTPException: 413 если файл слишком большой
+        """
         if not file.filename or not file.filename.endswith('.torrent'):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -61,7 +79,7 @@ class TorrentService:
         # Создаем запись в БД
         db_torrent = Torrent(
             info_hash=torrent_meta.info_hash,
-            title=torrent_in.title or torrent_meta.name,  # Если юзер не дал имя, берем из файла
+            title=torrent_in.title or torrent_meta.name, # Если юзер не дал имя, берем из файла
             description=torrent_in.description,
             size=torrent_meta.total_size,
             file_path=str(file_path),

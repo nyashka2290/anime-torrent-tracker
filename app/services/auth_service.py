@@ -8,9 +8,22 @@ from app.core.security import get_password_hash, verify_password
 
 
 class AuthService:
+    """Сервис аутентификации и регистрации пользователей"""
     @staticmethod
     async def register_new_user(db: AsyncSession, user_in: UserCreate) -> User:
-        # Проверяем, не занят ли email
+        """
+        Регистрирует нового пользователя
+
+        Args:
+            db: Сессия базы данных
+            user_in: Данные для создания пользователя
+
+        Returns:
+            Созданный пользователь
+
+        Raises:
+            HTTPException: Если email или username уже заняты
+        """
         query = select(User).where(User.email == user_in.email)
         result = await db.execute(query)
         if result.scalar_one_or_none():
@@ -19,7 +32,6 @@ class AuthService:
                 detail="Email already registered"
             )
 
-        # Проверяем, не занят ли username
         query = select(User).where(User.username == user_in.username)
         result = await db.execute(query)
         if result.scalar_one_or_none():
@@ -28,7 +40,6 @@ class AuthService:
                 detail="Username already taken"
             )
 
-        # Создаем пользователя
         db_user = User(
             email=user_in.email,
             username=user_in.username,
@@ -36,7 +47,6 @@ class AuthService:
             is_superuser=False,
         )
 
-        # Сохраняем в БД
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
@@ -49,17 +59,24 @@ class AuthService:
             email: str,
             password: str
     ) -> User | None:
-        """Ищет юзера по email и проверяет пароль"""
-        # Ищем пользователя
+        """
+        Аутентификация пользователя по email и паролю
+
+        Args:
+            db: Сессия базы данных
+            email: Email пользователя
+            password: Пароль в открытом виде
+
+        Returns:
+            Пользователь если аутентификация успешна, иначе None
+        """
         query = select(User).where(User.email == email)
         result = await db.execute(query)
         user = result.scalar_one_or_none()
 
-        # Если пользователя нет
         if not user:
             return None
 
-        # Если пароль не правильный
         if not verify_password(password, user.hashed_password):
             return None
 

@@ -14,6 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login/access-token")
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Генератор сессии бд для Depends()"""
     async with AsyncSessionLocal() as session:
         yield session
 
@@ -23,7 +24,17 @@ async def get_current_user(
         token: str = Depends(oauth2_scheme)
 ) -> User:
     """
-    Проверяет JWT токен и возвращает текущего пользователя.
+    Проверяет JWT токен и возвращает текущего пользователя
+
+    Args:
+        db: Сессия базы данных
+        token: JWT токен из заголовка Authorization
+
+    Returns:
+        Авторизованный пользователь
+
+    Raises:
+        HTTPException: 401 если токен невалидный или пользователь не найден
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

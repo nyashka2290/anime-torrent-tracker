@@ -5,6 +5,7 @@ from app.models.base_class import Base
 
 
 class Torrent(Base):
+    """Модель торрента"""
     info_hash: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     title: Mapped[str] = mapped_column(String, index=True, nullable=False)
     description: Mapped[str | None] = mapped_column(String, nullable=True)
