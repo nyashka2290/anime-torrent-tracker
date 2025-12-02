@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
@@ -17,11 +18,11 @@ router = APIRouter()
 @router.post("/upload", response_model=TorrentResponse)
 async def upload_torrent(
         file: UploadFile = File(...),
-        title: str = Form(None),
-        description: str = Form(None),
+        title: str | None = Form(None),
+        description: str | None = Form(None),
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
-):
+) -> Torrent:
     """Загрузка нового торрента (только для авторизованных)"""
     torrent_in = TorrentCreate(title=title, description=description)
 
@@ -38,7 +39,7 @@ async def read_torrents(
         skip: int = 0,
         limit: int = 100,
         db: AsyncSession = Depends(get_db),
-):
+) -> Any:
     """Получение списка торрентов (Доступно всем)"""
     query = select(Torrent).offset(skip).limit(limit)
     result = await db.execute(query)
@@ -49,7 +50,7 @@ async def read_torrents(
 async def download_torrent(
         torrent_id: int,
         db: AsyncSession = Depends(get_db),
-):
+) -> FileResponse:
     """Скачивание торрента по ID"""
     query = select(Torrent).where(Torrent.id == torrent_id)
     result = await db.execute(query)
