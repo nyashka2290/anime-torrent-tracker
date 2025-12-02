@@ -1,13 +1,13 @@
 from pathlib import Path
 
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, get_current_user
-from app.models.user import User
+from app.api.deps import get_current_user, get_db
 from app.models.torrent import Torrent
+from app.models.user import User
 from app.schemas.torrent import TorrentCreate, TorrentResponse
 from app.services.torrent_service import TorrentService
 

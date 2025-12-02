@@ -1,5 +1,6 @@
 from pathlib import Path
-from fastapi import UploadFile, HTTPException, status
+
+from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from torrentool.api import Torrent as TorrentParser

@@ -1,8 +1,8 @@
 """Главный модуль приложения FastAPI"""
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Query, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.orm import joinedload
 
 from app.api.v1.router import api_router
