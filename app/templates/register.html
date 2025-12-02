@@ -71,7 +71,11 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             }, 1500);
         } else {
             const data = await response.json();
-            errorDiv.textContent = data.detail || 'Ошибка регистрации';
+            if (Array.isArray(data.detail)) {
+                errorDiv.textContent = data.detail[0].msg.replace('Value error, ', '');
+            } else {
+                errorDiv.textContent = data.detail || 'Ошибка регистрации';
+            }
         }
     } catch (err) {
         errorDiv.textContent = 'Ошибка сервера';
