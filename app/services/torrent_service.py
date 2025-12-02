@@ -80,7 +80,8 @@ class TorrentService:
         # Создаем запись в БД
         db_torrent = Torrent(
             info_hash=torrent_meta.info_hash,
-            title=torrent_in.title or torrent_meta.name, # Если юзер не дал имя, берем из файла
+            # Если юзер не дал имя, берем из файла
+            title=torrent_in.title or torrent_meta.name,
             description=torrent_in.description,
             size=torrent_meta.total_size,
             file_path=str(file_path),

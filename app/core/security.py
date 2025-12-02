@@ -20,7 +20,8 @@ def get_password_hash(password: str) -> str:
 
 def create_access_token(subject: str | int) -> str:
     """Создает JWT токен с временем жизни"""
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = (datetime.now(timezone.utc) +
+              timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
 
     to_encode = {"exp": expire, "sub": str(subject)}
 
