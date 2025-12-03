@@ -14,12 +14,10 @@
 1. Скопируйте файл окружения + костыль(пока не смог поправить):
 ```bash
 cp .env.example .env
-sed -i 's/\r$//' entrypoint.sh
 ```
 
 2. Запустите приложение:
 ```bash
-docker-compose dowm -v
 docker-compose up --build
 ```
 
