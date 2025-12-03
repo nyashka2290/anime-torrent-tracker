@@ -11,17 +11,16 @@
 
 ## Запуск
 
-1. Скопируйте файл окружения + костыль(пока не смог поправить):
+1. Все необходимые команды:
 ```bash
+git clone https://github.com/nyashka2290/anime-torrent-tracker.git
+cd anime-torrent-tracker/
+git checkout dev
 cp .env.example .env
-```
-
-2. Запустите приложение:
-```bash
 docker-compose up --build
 ```
 
-3. Откройте в браузере: http://localhost:8000
+2. Откройте в браузере: http://localhost:8000
 
 ## Архитектура
 
