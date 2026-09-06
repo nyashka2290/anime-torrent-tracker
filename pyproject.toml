@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 88
+lint.select = ["E", "F", "I"]
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+# Отключаем проверки для FastAPI декораторов
+disallow_untyped_decorators = false
+# Разрешаем Any из внешних библиотек
+warn_return_any = false

@@ -9,6 +9,19 @@
 - **Tracker:** OpenTracker (HTTP/UDP)
 - **Deployment:** Docker, Docker Compose
 
+## Запуск
+
+1. Все необходимые команды:
+```bash
+git clone https://github.com/nyashka2290/anime-torrent-tracker.git
+cd anime-torrent-tracker/
+git checkout dev
+cp .env.example .env
+docker-compose up --build
+```
+
+2. Откройте в браузере: http://localhost:8000
+
 ## Архитектура
 
 ### Диаграмма компонентов

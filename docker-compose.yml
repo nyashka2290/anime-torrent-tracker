@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  tracker:
+    image: lednerb/opentracker-docker:latest
+    restart: always
+    ports:
+      - "6969:6969/udp"
+      - "6969:6969/tcp"
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_SERVER: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

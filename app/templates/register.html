@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация — Anime Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Регистрация</h3>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" id="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" id="password" class="form-control" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Повторите пароль</label>
+                        <input type="password" id="password2" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                </form>
+                <div id="error" class="text-danger mt-3 text-center"></div>
+                <div id="success" class="text-success mt-3 text-center"></div>
+                <hr>
+                <p class="text-center mb-0 text-muted">
+                    Уже есть аккаунт? <a href="/login">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
+    const errorDiv = document.getElementById('error');
+    const successDiv = document.getElementById('success');
+
+    errorDiv.textContent = '';
+    successDiv.textContent = '';
+
+    if (password !== password2) {
+        errorDiv.textContent = 'Пароли не совпадают';
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/v1/auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, username, password})
+        });
+
+        if (response.ok) {
+            successDiv.textContent = 'Регистрация успешна! Перенаправление...';
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1500);
+        } else {
+            const data = await response.json();
+            if (Array.isArray(data.detail)) {
+                errorDiv.textContent = data.detail[0].msg.replace('Value error, ', '');
+            } else {
+                errorDiv.textContent = data.detail || 'Ошибка регистрации';
+            }
+        }
+    } catch (err) {
+        errorDiv.textContent = 'Ошибка сервера';
+    }
+});
+</script>
+{% endblock %}
